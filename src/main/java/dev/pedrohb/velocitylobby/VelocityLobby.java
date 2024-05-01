@@ -7,11 +7,15 @@ import java.util.UUID;
 import org.slf4j.Logger;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.command.BrigadierCommand;
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 
+import dev.pedrohb.velocitylobby.commands.DefaultLobbyCommand;
 import dev.pedrohb.velocitylobby.listeners.Listeners;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,6 +40,13 @@ public class VelocityLobby {
   @Subscribe
   public void onProxyInitialization(ProxyInitializeEvent event) {
     Listeners.setupListeners(this, proxy, logger);
+
+    CommandManager commandManager = proxy.getCommandManager();
+    CommandMeta commandMeta = commandManager.metaBuilder("defaultlobby").aliases("dl").plugin(this).build();
+
+    BrigadierCommand setDefaultCommand = DefaultLobbyCommand.createBrigadierCommand(proxy);
+
+    commandManager.register(commandMeta, setDefaultCommand);
   }
 
   @Inject
